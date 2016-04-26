@@ -1,0 +1,3 @@
+$('.post<%= @post.id %>').text('<%= @post.vote %>');
+	$('.button<%= @post.id %>').text('');
+	$('.button<%= @post.id %>').append('<%= button_to '+', upvote_post_path(@post), method: :put, remote: true %>');

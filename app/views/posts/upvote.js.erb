@@ -1,0 +1,5 @@
+$('.post<%= @post.id %>').text('<%= @post.vote %>');
+if(<%= cookies[:voted].include?("a"+@post.id.to_s) %> === true){
+	$('.button<%= @post.id %>').text('');
+	$('.button<%= @post.id %>').append('<%= button_to '-', downvote_post_path(@post), method: :put, remote: true %>');
+};

@@ -1,0 +1,98 @@
+<script>
+function proceed(){
+  if(document.getElementById("remember").checked==true){
+    var date = new Date();
+    date.setTime(date.getTime()+(14*24*60*60*1000));
+    var expires = date.toGMTString();
+    document.cookie = "remember=true; expires="+expires;
+    console.log(document.cookie);
+  }
+  document.getElementById("over").className+=" hidden";
+}
+</script>
+<div class="aboutlink"><%= link_to 'about', about_path %></div>
+  <header>
+    <img src="http://i.imgur.com/EFGj4WP.png">
+    <p id="notice"><%= notice %></p>
+  </header>
+  <aside>
+    <h2>POST HERE</h2>
+    <p>Post something using the form below. It can be anything from something that happened today to how you feel about something. have fun!</p>
+    <%= form_tag("posts", method: "post") do %>
+      <%= recaptcha_tags %>
+      <%= text_area_tag(:body, nil ,  class: "textarea", rows: "4", onkeyup: "textCounter(this, 'counter', 300)")%><br>
+      <span class="note"><span id="counter">300</span> character(s) left</span>
+      <%= submit_tag("submit") %>
+     <%end%>
+    <p><%= link_to 'Order by date', root_path(:sort => "id") %> | <%= link_to 'Order by votes', root_path(:sort => "vote") %>
+      <% if cookies[:secret] == "spinach"%>
+        <%= form_tag("pass", method: "delete") do %>
+          <%= submit_tag("Remove Powers") %>
+        <%end%>
+      <%end%></p>
+  </aside>
+  <main>
+    <ul>
+      <% @posts.each do |post| %>
+      <li>
+        <div class="contentpart">
+          <time><%= post.created_at.to_formatted_s(:db)%></time>
+          <%= highlight(simple_format(post.body), '&gt;') %>
+          <div class="replybox"><%= pluralize(post.replies.count, "reply") %> <%= link_to 'View', post_path(post) %>
+
+              <% if cookies[:secret] == "spinach"%>
+              <%= link_to 'Edit', edit_post_path(post) %>
+              <%= link_to 'Destroy', post, method: :delete, data: { confirm: 'Are you sure?' } %>
+              <% end %></div>
+        </div>
+        <div class="votepart">
+          <h2 class="post<%= post.id %>"><%= post.vote %></h2>
+          <p>votes</p>
+          <h3 class="button<%= post.id %>"><% if cookies[:voted].include?(post.id.to_s) == true%>
+              <%= button_to '-', downvote_post_path(post), method: :put, remote: true %>
+              <% else %>
+              <%= button_to '+', upvote_post_path(post), method: :put, remote: true %>
+          <%end%></h3>
+        </div>
+      </li>
+      <% end %>
+    </ul>
+  </main>
+  <footer>
+    <p>Created by Sam Furr. <span class="links"><a href="http://www.twitter.com/hybls">twitter</a> | <a href="http://www.samneillfurr.com">me</a></span></p>
+  </footer>
+  <div class="overlay" id="over">
+    <div class="overlay-box">
+      <h2>WELCOME</h2>
+      <p>What you see here is an anonymous megaphone for your thoughts and feelings, allowing others to comment and feel with you as you go through life. Use it as you wish and know that your voice is heard.</p>
+      <p>You can use the form on the left to submit whatever you like. Enjoy!</p>
+      <p><input type="checkbox" id="remember"> <em>Dont show this again</em><a href="#" onclick="proceed()" id="okay">Let's go!</a></p>
+    </div>
+  </div>
+  <script>
+  function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+    }
+    return "";
+  }
+
+  if(getCookie("remember")=="true"){
+    document.getElementById("over").className+=" hidden";
+  }
+
+function textCounter(field,field2,maxlimit)
+{
+ var countfield = document.getElementById(field2);
+ if ( field.value.length > maxlimit ) {
+  field.value = field.value.substring( 0, maxlimit );
+  return false;
+ } else {
+  countfield.innerHTML = maxlimit - field.value.length;
+ }
+}
+</script>
