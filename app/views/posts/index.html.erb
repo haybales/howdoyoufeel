@@ -17,7 +17,7 @@ function proceed(){
   </header>
   <aside>
     <h2>POST HERE</h2>
-    <p>Post something using the form below. It can be anything from something that happened today to how you feel about something. have fun!</p>
+    <p>Post something using the form below. It can be anything from something that happened today to how you feel about something. <br>Have fun!</p>
     <%= form_tag("posts", method: "post") do %>
       <%= recaptcha_tags %>
       <%= text_area_tag(:body, nil ,  class: "textarea", rows: "4", onkeyup: "textCounter(this, 'counter', 300)")%><br>
